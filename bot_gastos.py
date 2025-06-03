@@ -18,12 +18,17 @@ from datetime import datetime
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
+import json
+
 def connect_to_gsheet():
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    creds = ServiceAccountCredentials.from_json_keyfile_name("credenciales.json", scope)
+    credentials_content = os.getenv("GOOGLE_CREDENTIALS_JSON")
+    creds_dict = json.loads(credentials_content)
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
     libro = client.open("RegistroGastos")
     return libro.sheet1, libro.worksheet("DetalleSuper")
+
 
 sheet_main, sheet_detalle = connect_to_gsheet()
 
