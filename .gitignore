@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+
+# Entorno virtual
+venv/
+
+# Archivos sensibles
+.env
+credenciales.json
+
+# Archivos temporales
+*.bat
+
+# Otros
+.DS_Store

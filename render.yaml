@@ -1,0 +1,14 @@
+services:
+  - type: worker
+    name: bot-gastos
+    runtime: python
+    repo: https://github.com/ginasoft/BotGastos.git
+    branch: main
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python bot_gastos.py
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
