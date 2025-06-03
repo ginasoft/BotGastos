@@ -1,12 +1,9 @@
-
 import os
-
 from dotenv import load_dotenv
 import openai
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
-
 
 import logging
 import re
@@ -183,24 +180,25 @@ async def handle_audio(update: Update, context: ContextTypes.DEFAULT_TYPE):
     file_path = "/tmp/audio.ogg"
     file = await update.message.voice.get_file()
     await file.download_to_drive(file_path)
-    result = model.transcribe(file_path)
-    os.remove(file_path) 
-    await solicitar_confirmacion(update, result["text"], "Audio")
 
+    with open(file_path, "rb") as audio_file:
+        transcript = openai.Audio.transcribe("whisper-1", audio_file)
+    os.remove(file_path)
+
+    await solicitar_confirmacion(update, transcript["text"], "Audio")
 
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     file_path = "/tmp/ticket.jpg"
     file = await update.message.photo[-1].get_file()
     await file.download_to_drive(file_path)
     texto = pytesseract.image_to_string(Image.open(file_path))
-    os.remove(file_path) 
+    os.remove(file_path)
     await solicitar_confirmacion(update, texto, "Foto")
-
 
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await solicitar_confirmacion(update, update.message.text, "Texto")
 
-app = ApplicationBuilder().token("BOT_TOKEN").build()
+app = ApplicationBuilder().token(os.getenv("BOT_TOKEN")).build()
 app.add_handler(MessageHandler(filters.VOICE, handle_audio))
 app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
