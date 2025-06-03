@@ -1,1 +1,5 @@
+#Para instalarlo en otra maquina localmente
+python -m venv venv
 venv\Scripts\activate
+pip install -r requirements-local.txt
+python bot_gastos_local.py
